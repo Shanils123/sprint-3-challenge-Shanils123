@@ -54,10 +54,49 @@
       // 🧠 Implement a `getAllSquared` method which returns an array with the integers squared
       // 🧠 Implement a `pop` method which removes the last integer from `ints`  and returns it
       // 🧠 Implement a `push` method which takes an int and pushes it to the end of `ints`, and returns the updated `ints` property
-      // 🧠 Implement a `getEveryNth` method which takes an int `n` and returns an array with the ints at position 0, n, n + n, n + n + n, etc
+      // 🧠 Implement a `getEveryNth` method which takes an int `n` and returns an array with the ints at position 0, n, n + n, n + n + n, 
+          //etc
       // 🧠 Implement a `getAllReversed` method which returns the ints in reverse order
       // ❗ WARNING: except for `getAllReversed`, methods must respect the order of the integers
       // ❗ WARNING: note that none of the methods actually mutate the `ints` property
+      constructor(...ints){
+        this.ints = ints;
+        ints.filter(int => Number.isInteger(ints))
+      }
+      getAll(){
+        return this.ints;
+      }
+      getEvens(){
+        return this.ints.filter(int => int % 2 === 0);
+      }
+      getNegatives(){
+        return this.ints.filter(int => int < 0);
+      }
+      getAllSquared(){
+        return this.ints.map(int => int * int);
+      }
+      pop(){
+        return this.ints.pop()
+      }
+      push(...integer){ 
+        this.ints.push(...integer)
+        return this.ints // it was weird I tried putting return on line 82 but it didn't work, but with this line it work... I don't understand why
+      }
+      //This one was confusing to understand.
+      getEveryNth(n){ 
+        let position = []; 
+        
+        for(let i = 0; i < this.ints.length; i +=n){
+          position.push(this.ints[i])
+        }
+        return position
+      }
+
+      getAllReversed(){//used slice to not change the original array
+        let reversed = this.ints.slice().reverse();
+        return reversed;
+      }
+
 
     }
 
@@ -76,8 +115,35 @@
       //      * When engaging the safety, return "Safety enabled!"
       //      * When disengaging the safety, return "Safety disabled!"
       // 🌟 HINT: instances need to keep track of their maximum capacity as well as their current capacity
-
+        constructor(ammo){
+          this.maxCapacity = ammo;
+          this.currentCapacity = ammo;
+          this.safetyOn = true;
     }
+    shoot(){
+      let message = (this.currentCapacity > 0 && !this.safetyOn) ? "Bang!": "Click!"
+      this.currentCapacity --
+      return message
+    }
+    
+    reload(ammo){
+      if(typeof ammo !== 'number' || ammo <= 0){
+        return "Error reloading!"
+      }
+
+      this.currentCapacity += ammo
+      
+      if(this.currentCapacity > this.maxCapacity){
+        this.currentCapacity = this.maxCapacity
+      }
+      return `${this.currentCapacity} projectiles left!`
+    }
+
+    toggleSafety(){
+      this.safetyOn = !this.safetyOn;
+      return this.safetyOn ? "Safety enabled!" : "Safety disabled!"
+    }
+  }
 
     // 👉 CHALLENGE 3 EBook
     class EBook {
@@ -95,7 +161,29 @@
       //    ebook.next() // returns null
       // 🌟 HINT: remember about the `slice` method which strings and arrays have
       // ❗ Feel free to implement `back`, although this is not required nor graded
+      
+      constructor(texts, characters){
+        this.texts = texts;
+        this.characters = characters;
+        this.thePage = '' ; 
+        this.startPoint = 0;
+        this.endPoint = this.characters;
+      }
+      next (){
+        if (this.startPoint > this.texts.length){
+          return null
+        }
+        
+        //this is holding value of sliced character range in thePage
+        this.thePage = this.texts.slice(this.startPoint, this.endPoint)
 
+        //this is going up each time, we are adding number characters to the startpoint and endpoint
+
+        this.startPoint += this.characters;
+        this.endPoint += this.characters;
+
+        return this.thePage
+      }
     }
 
     // 👉 CHALLENGE 4 AntFarm
@@ -130,7 +218,36 @@
       //      console.log(list) // prints ["a"]
       // 👉 HINT: if you are not feeling confident with map and filter, solve the problem with for loops,
       //      and with the piece of mind of all tests passing, refactor to use map/filter
+        constructor (...nameOfAnts){
+          this.ants = nameOfAnts.map(name=>({name, health: 100})) 
+          //this is an instance holding the value of nameOfAnts in an object with propertie of name and health being set to 100.
+        }
+        work(){
+          //an if statement to check if there are any ants in the antFarm first
+          if(this.ants.length === 0){
+            return "No ants here. Did you work them to death?"
+          } 
+          
+          //When this method is called it'll take 20 health points away from working ants.
+          for(let i = 0; i < this.ants.length; i++){
+            this.ants[i].health -= 20;
+          }
+          
+          //If their health reaches 0 it'll delete that ant from the antFarm.
+          this.ants = this.ants.filter(ant => ant.health > 0);
 
+          return `${this.ants.length} ants starting work!`
+        }
+        feed (antName){
+          //checks if name exist if so, it'll feed and heal him
+          if(antName === this.ants.name){
+            this.ants.health += 15;
+            return 'Yum!'
+            //else it'll return a string
+          } else {
+            return `${antName} not found!`
+          }
+        }
     }
 
     // 🧪 TESTS, do not make any changes below this line ===================

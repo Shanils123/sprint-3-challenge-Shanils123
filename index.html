@@ -222,28 +222,45 @@
           this.ants = nameOfAnts.map(name=>({name, health: 100})) 
           //this is an instance holding the value of nameOfAnts in an object with propertie of name and health being set to 100.
         }
+        
         work(){
           //an if statement to check if there are any ants in the antFarm first
           if(this.ants.length === 0){
             return "No ants here. Did you work them to death?"
           } 
           
+          //fixing the count problem starting from 2 instead of 3 by adding a count of ants before going to work for future use.
+          let beforeWork = this.ants.length
+          //console.log(beforeWork)
+
           //When this method is called it'll take 20 health points away from working ants.
-          for(let i = 0; i < this.ants.length; i++){
+          for(let i = 0 ; i < this.ants.length; i++){
             this.ants[i].health -= 20;
-          }
           
           //If their health reaches 0 it'll delete that ant from the antFarm.
-          this.ants = this.ants.filter(ant => ant.health > 0);
-
-          return `${this.ants.length} ants starting work!`
+          if(this.ants[i].health <= 0){
+              this.ants.splice(i, 1);
+              i--
+              //realized counts starts at 2 instead of the 3 the console wants
+              //fix this by using the beforeWork variable and then the loop will continue removing an ant at a time.
+          }
         }
+          return `${beforeWork} ants starting work!`
+      }
         feed (antName){
-          //checks if name exist if so, it'll feed and heal him
-          if(antName === this.ants.name){
-            this.ants.health += 15;
+          for(let i = 0; i < this.ants.length; i++){
+            //console.log(i)
+            //using the loop, we are checking name is found to add health
+            let ant = this.ants[i]
+            if(ant.name === antName){
+              ant.health += 15;
+            }
+          }
+          //this is using the find method to check if name equal to one another to store it in a variable
+          let findAnt = this.ants.find(ant => ant.name === antName)
+          //if it is return Yum if it isn't return not found
+          if(findAnt){
             return 'Yum!'
-            //else it'll return a string
           } else {
             return `${antName} not found!`
           }
